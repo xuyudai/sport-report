@@ -1,5 +1,5 @@
 import json
-with open("运动记录-2026-10-22.json",encoding="utf-8") as f:
+with open("运动记录-2026-10-22 (1).json",encoding="utf-8") as f:
     data =json.load(f)
 
 print("一共",len(data),"条记录")
@@ -21,3 +21,11 @@ for r in data:
     if(r['minutes']>longest):
         longest=r['minutes']
 print('最长的一段时间是：',longest)
+by_type={}
+for r in data:
+    t=r['type']
+    if t not in by_type:
+        by_type[t]=0
+    by_type[t]=by_type[t]+r['minutes']
+for t in by_type:
+    print(t,by_type[t],'分钟')

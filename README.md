@@ -5,17 +5,21 @@
 
 ## 用法
 
-1. 打开 `D:\运动记录\index.html`，点「导出 JSON」，得到 `运动记录-2026-10-21.json`
-2. 在命令行里跑：
+1. 打开 `D:\运动记录\index.html`，点「导出 JSON」——**文件落在系统下载文件夹就行，不用拖过来**
+2. 双击 `run.bat`，或者命令行里跑：
 
 ```bash
-python stats.py 运动记录-2026-10-21.json          # 本周
-python stats.py 运动记录-2026-10-21.json --week 43  # 第 43 周
-python stats.py 运动记录-2026-10-21.json --all      # 全部
-python stats.py 运动记录-2026-10-21.json --json     # 给下一步喂模型
+python stats.py                    # 自动找最新的导出文件
+python stats.py --week 43          # 第 43 周
+python stats.py --all              # 全部
+python stats.py --json             # 给下一步喂模型
 ```
 
-导出文件放在这个目录里就行，`.gitignore` 已经忽略 `*.json`，记录不会被推到 GitHub。
+不给文件名时，脚本会依次在**脚本目录、当前目录、系统下载目录**里找 `运动记录-*.json`，取最新的一个，并在终端打印用了哪个文件。浏览器重复下载产生的 `运动记录-2026-10-22 (1).json` 也能认出来。
+
+想指定文件仍然可以：`python stats.py 某个文件.json`。
+
+`.gitignore` 已经忽略 `*.json`，记录不会被推到 GitHub。
 
 `sample.json` 是编的示例数据（8 条，跨两周），用来测试和演示，随便删。
 

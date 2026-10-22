@@ -219,15 +219,36 @@ def render_text(stats: dict, title: str) -> str:
 
 # ---------- 入口 ----------
 
+def find_latest() -> list[str]:
+    """不给文件名时，自己去常见位置找最新的 运动记录-*.json。
+
+    依次看：脚本所在目录、当前目录、系统下载目录。
+    浏览器重复下载会留下 "记录-2026-10-22 (1).json" 这种名字，一并匹配。
+    """
+    here = Path(__file__).resolve().parent
+    candidates: list[Path] = []
+    for d in (here, Path.cwd(), Path.home() / "Downloads"):
+        if d.is_dir():
+            candidates.extend(d.glob("运动记录-*.json"))
+    if not candidates:
+        raise SystemExit(
+            "没找到 运动记录-*.json。\n"
+            "先从 D:\\运动记录\\index.html 点「导出 JSON」，再跑一次。"
+        )
+    newest = max(candidates, key=lambda p: p.stat().st_mtime)
+    print(f"（自动选用最新的记录文件：{newest}）", file=sys.stderr)
+    return [str(newest)]
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="统计运动记录（读 index.html 导出的 JSON）")
-    ap.add_argument("files", nargs="+", help="导出的 JSON 文件，可给多个")
+    ap.add_argument("files", nargs="*", help="导出的 JSON 文件；不给就自动找最新的")
     ap.add_argument("--week", help="ISO 周，如 43 或 2026-W43；默认本周")
     ap.add_argument("--all", action="store_true", help="不按周筛，统计全部记录")
     ap.add_argument("--json", action="store_true", help="输出 JSON 而不是文本")
     args = ap.parse_args(argv)
 
-    records = load_records(args.files)
+    records = load_records(args.files or find_latest())
 
     if args.all:
         start = end = None

@@ -16,3 +16,8 @@ else :
     average=total/n
     average=round(average,1)
     print(f"平均每次{average}分钟")
+longest=0
+for r in data:
+    if(r['minutes']>longest):
+        longest=r['minutes']
+print('最长的一段时间是：',longest)

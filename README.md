@@ -37,7 +37,27 @@ python stats.py --json             # 给下一步喂模型
 最长一次            65 分钟（骑行，2026-10-23）
 ```
 
+## 生成周报（report.py）
+
+```bash
+python report.py        # 默认第 43 周
+python report.py 44     # 指定周
+```
+
+做三件事：调 `stats` 模块取数据 → 拼成一段中文 prompt → 发给模型，把结果写进 `周报-2026-W43.md`。
+
+- 第 43 周没有记录时直接退出，**不消耗 token**
+- API Key 从环境变量 `DEEPSEEK_API_KEY` 读，代码里不出现
+- 需要 `pip install requests`
+
 ## 代码结构
+
+| 文件 | 职责 |
+|---|---|
+| `stats.py` | 读取 + 统计 + 排版，可单独运行 |
+| `report.py` | 取统计结果 → 调模型 → 写周报 |
+| `mini.py` | 学习期的练习原型，不再修改 |
+| `trial.py` | 调通 API 的最小验证 |
 
 | 函数 | 职责 | 为什么单独拆出来 |
 |---|---|---|
@@ -46,12 +66,12 @@ python stats.py --json             # 给下一步喂模型
 | `render_text` | 排版成人看的 | 界面和计算分离，以后可换 HTML/PPT |
 | `main` | 命令行入口 | 只做参数解析和调度 |
 
-## 下一步（阶段 1）
+## 下一步（阶段 2）
 
-- `llm.py`：读 `stats --json` 的结果 → 调模型 API → 生成 300 字周报
-- API Key 从环境变量读（`DEEPSEEK_API_KEY`），**不要写进代码**
-- 输出 `周报-2026-W43.md`
+- 把 `stats.py` 拆成类：`RecordStore` / `Stats` / `LLMClient` / `Report`
+- 加 pytest 单测
+- 对应面向对象课程，代码可直接当作业
 
 ## 环境
 
-Python 3.11，只用标准库，不需要 pip install。
+Python 3.11 + `requests`。Key 放环境变量，不要写进代码。

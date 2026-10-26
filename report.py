@@ -1,9 +1,14 @@
 import stats
+import sys
 import os
 import requests
+week=int (sys.argv[1]) if len(sys.argv) > 1 else 43
 records=stats.load_records(stats.find_latest())
-start,end=stats.week_bounds(2026,43)
+start,end=stats.week_bounds(2026,week)
 data=stats.compute(records,start,end)
+if data['count']==0:
+    print(f"第{week}周没有记录，先去记上一笔再来。")
+    sys.exit(0)
 print(data['total_minutes'],"分钟",data['count'],'次')
 lines=[]
 lines.append(f"本周({data['range']['start']})到{data['range']['end']}运动情况：")
@@ -32,5 +37,5 @@ resp=requests.post(
 )
 text = resp.json()["choices"][0]["message"]["content"]
 print(text)
-with open("周报-2026-W43.md","w",encoding='utf-8') as f:
+with open(f"周报-2026-W{week}.md","w",encoding='utf-8') as f:
     f.write(text)
